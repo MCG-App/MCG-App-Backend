@@ -15,15 +15,15 @@ print(default_app.name)
 
 
 class UserModel(db.Model):
-    uid = db.Column(db.String, primary_key=True)
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
+    id = db.Column(db.String, primary_key=True)
+    firstname = db.Column(db.String(50), nullable=False)
+    lastname = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String, nullable=False)
     group = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return f'User(uid={self.uid}, first_name={self.first_name}, last_name={self.last_name}, email={self.email}, ' \
-               f'group={self.group}) '
+        return f'User(id={self.id}, firstname={self.firstname}, lastname={self.lastname}, email={self.email}, ' \
+               f'group={self.group})'
 
 
 with app.app_context():
@@ -31,17 +31,17 @@ with app.app_context():
 
 signup_args = reqparse.RequestParser()
 signup_args.add_argument('token', type=str, help='Token is required', required=True)
-signup_args.add_argument('first_name', type=str, help='First name is required', required=True)
-signup_args.add_argument('last_name', type=str, help='Last name is required', required=True)
+signup_args.add_argument('firstname', type=str, help='First name is required', required=True)
+signup_args.add_argument('lastname', type=str, help='Last name is required', required=True)
 signup_args.add_argument('group', type=str, help='Group is required', required=True)
 
 user_args = reqparse.RequestParser()
 user_args.add_argument('token', type=str, help='Token is required', required=True)
 
 user_resource_fields = {
-    'uid': fields.String,
-    'first_name': fields.String,
-    'last_name': fields.String,
+    'id': fields.String,
+    'firstname': fields.String,
+    'lastname': fields.String,
     'email': fields.String,
     'group': fields.String
 }
@@ -75,7 +75,7 @@ class User(Resource):
         if result:
             abort(409, message='This user already exists')
 
-        user = UserModel(uid=firebase_user['uid'], first_name=args['first_name'], last_name=args['last_name'],
+        user = UserModel(id=firebase_user['uid'], firstname=args['firstname'], lastname=args['lastname'],
                          email=firebase_user['email'], group=args['group'])
 
         db.session.add(user)
