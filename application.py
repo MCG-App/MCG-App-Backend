@@ -64,6 +64,15 @@ def get_firebase_user(token):
     return decoded_token
 
 
+def check_if_group_is_valid(group):
+    print(group)
+    valid_groups = ['7a', '7b', '7c', '7d', '7e', '7f', '8a', '8b', '8c', '8d', '8e', '9a', '9b', '9c', '9d', '9e',
+                    '10a', '10b', '10c', '10d', '10e', '11_1', '11_2', '11_3', '11_4', '11_5', '12_1', '12_2', '12_3',
+                    '12_4', '12_5']
+    if group not in valid_groups:
+        abort(403, message='The provided group is not valid')
+
+
 class User(Resource):
     @marshal_with(user_resource_fields)
     def post(self):
@@ -74,6 +83,8 @@ class User(Resource):
         result = UserModel.query.get(firebase_user['uid'])
         if result:
             abort(409, message='This user already exists')
+
+        check_if_group_is_valid(args['group'])
 
         user = UserModel(id=firebase_user['uid'], firstname=args['firstname'], lastname=args['lastname'],
                          email=firebase_user['email'], group=args['group'])
