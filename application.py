@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
 import firebase_admin
@@ -95,10 +95,9 @@ class User(Resource):
 
     @marshal_with(user_resource_fields)
     def get(self):
-        args = user_args.parse_args()
-        print(args)  # debug
+        token = request.headers.get('authorization')
 
-        firebase_user = get_firebase_user(args['token'])
+        firebase_user = get_firebase_user(token)
 
         user = UserModel.query.get_or_404(firebase_user['uid'], description='This user does not exist')
         print(user)  # debug
